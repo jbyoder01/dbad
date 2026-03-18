@@ -72,34 +72,46 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator.adaptive())
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _questionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Question',
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
+          : SafeArea(
+            child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TextField(
+                        controller: _questionController,
+                        decoration: const InputDecoration(
+                          labelText: 'Question',
+                          border: OutlineInputBorder(),
+                          alignLabelWithHint: true,
+                        ),
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
                     ),
-                    maxLines: 4,
-                    textCapitalization: TextCapitalization.sentences,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _answerController,
-                    decoration: const InputDecoration(
-                      labelText: 'Answer',
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
+                    const SizedBox(height: 16),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _answerController,
+                        decoration: const InputDecoration(
+                          labelText: 'Answer',
+                          border: OutlineInputBorder(),
+                          alignLabelWithHint: true,
+                        ),
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
                     ),
-                    maxLines: 4,
-                    textCapitalization: TextCapitalization.sentences,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+          ),
     );
   }
 

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import 'package:dbad/providers/game_provider.dart';
 import 'package:dbad/screens/flashcard/widgets/flashcard.dart';
-import 'package:dbad/screens/game/forward_only_page_physics.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -56,14 +55,12 @@ class _GameScreenState extends State<GameScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title:
-                Text('Card ${game.currentIndex + 1} of ${game.totalCards}'),
+            title: Text('Card ${game.currentIndex + 1} of ${game.totalCards}'),
           ),
           body: SafeArea(
             top: false,
             child: PageView.builder(
               controller: _pageController,
-              physics: const ForwardOnlyPagePhysics(),
               itemCount: game.totalCards + 1,
               onPageChanged: (index) => game.onPageChanged(index),
               itemBuilder: (context, index) {
@@ -72,7 +69,7 @@ class _GameScreenState extends State<GameScreen> {
                 }
                 final card = game.cards[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(16),
                   child: Flashcard(
                     question: card.question,
                     answer: card.answer,

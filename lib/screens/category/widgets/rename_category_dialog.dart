@@ -42,6 +42,7 @@ class _RenameCategoryDialogState extends State<RenameCategoryDialog> {
         controller: _controller,
         autofocus: true,
         decoration: const InputDecoration(hintText: 'Category name'),
+        textCapitalization: .words,
       ),
       actions: [
         TextButton(

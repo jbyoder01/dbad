@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class Flashcard extends StatefulWidget {
   final String question;
@@ -97,11 +98,22 @@ class _FlashcardState extends State<Flashcard>
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
+            spacing: 16,
             children: [
               Text(label, style: _labelStyle(context)),
-              const Spacer(),
-              Text(text, style: _cardTextStyle, textAlign: TextAlign.center),
-              const Spacer(),
+              Flexible(
+                child: MarkdownBody(
+                  data: text,
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                      .copyWith(
+                        p: _cardTextStyle,
+                        code: _cardTextStyle.copyWith(
+                          fontFamily: 'monospace',
+                          fontSize: 18,
+                        ),
+                      ),
+                ),
+              ),
             ],
           ),
         ),
@@ -119,4 +131,4 @@ TextStyle _labelStyle(BuildContext context) {
   );
 }
 
-const _cardTextStyle = TextStyle(fontSize: 22, fontWeight: FontWeight.w500);
+const _cardTextStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.w500);

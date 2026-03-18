@@ -9,7 +9,7 @@ A minimal flashcard app built with Flutter. Create categories, add flashcards, a
 - **Game mode** — shuffled cards with a 3D flip animation, progress counter, and completion screen
 - **Search** — filter categories and flashcards by name/content
 - **Slide-to-delete** — swipe categories to reveal a delete action
-- **Dark theme** — Material 3 dark theme with deep purple accent
+- **Dark theme** — Material 3 dark theme with blue accent
 
 ## Tech Stack
 
