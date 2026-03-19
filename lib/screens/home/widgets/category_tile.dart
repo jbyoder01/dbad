@@ -3,7 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/category.dart';
 import 'package:dbad/providers/categories_provider.dart';
 
 class CategoryTile extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/flashcard.dart';
 
 class FlashcardTile extends StatelessWidget {
   final Flashcard flashcard;

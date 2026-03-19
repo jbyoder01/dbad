@@ -1,57 +1,54 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
-import 'package:dbad/data/daos/flashcards_dao.dart';
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/flashcard.dart';
+import 'package:dbad/data/services/flashcards_service.dart';
 
 class FlashcardsProvider extends ChangeNotifier {
-  final FlashcardsDao _dao;
+  final FlashcardsService _service;
   final int categoryId;
 
   List<Flashcard> _flashcards = [];
   String _searchQuery = '';
-  StreamSubscription<List<Flashcard>>? _subscription;
+  bool _isLoading = false;
 
-  FlashcardsProvider(this._dao, this.categoryId) {
-    _subscribe();
+  FlashcardsProvider(this._service, this.categoryId) {
+    _loadData();
   }
 
   List<Flashcard> get flashcards => _flashcards;
   String get searchQuery => _searchQuery;
+  bool get isLoading => _isLoading;
 
   void setSearchQuery(String query) {
     _searchQuery = query;
-    _subscribe();
+    _loadData();
+  }
+
+  Future<int> createFlashcard(String question, String answer) async {
+    final id = await _service.insertFlashcard(categoryId, question, answer);
+    await _loadData();
+    return id;
+  }
+
+  Future<void> updateFlashcard(int id, String question, String answer) async {
+    await _service.updateFlashcard(id, question, answer);
+    await _loadData();
+  }
+
+  Future<void> deleteFlashcard(int id) async {
+    await _service.deleteFlashcard(id);
+    await _loadData();
+  }
+
+  Future<void> _loadData() async {
+    _isLoading = true;
     notifyListeners();
-  }
 
-  Future<int> createFlashcard(String question, String answer) {
-    return _dao.insertFlashcard(categoryId, question, answer);
-  }
+    _flashcards = _searchQuery.isEmpty
+        ? await _service.getFlashcardsForCategory(categoryId)
+        : await _service.getFlashcardsFiltered(categoryId, _searchQuery);
 
-  Future<void> updateFlashcard(int id, String question, String answer) {
-    return _dao.updateFlashcard(id, question, answer);
-  }
-
-  Future<void> deleteFlashcard(int id) {
-    return _dao.deleteFlashcard(id);
-  }
-
-  void _subscribe() {
-    _subscription?.cancel();
-    final stream = _searchQuery.isEmpty
-        ? _dao.watchFlashcardsForCategory(categoryId)
-        : _dao.watchFlashcardsFiltered(categoryId, _searchQuery);
-    _subscription = stream.listen((data) {
-      _flashcards = data;
-      notifyListeners();
-    });
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
+    _isLoading = false;
+    notifyListeners();
   }
 }

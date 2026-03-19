@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/daos/categories_dao.dart';
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/category.dart';
+import 'package:dbad/data/services/categories_service.dart';
 import 'package:dbad/providers/flashcards_provider.dart';
 import 'package:dbad/screens/category/widgets/flashcard_tile.dart';
 import 'package:dbad/screens/category/widgets/rename_category_dialog.dart';
@@ -27,7 +27,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<void> _loadCategory() async {
-    final category = await context.read<CategoriesDao>().getCategoryById(
+    final category = await context.read<CategoriesService>().getCategoryById(
       widget.categoryId,
     );
     if (mounted) {

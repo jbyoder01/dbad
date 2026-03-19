@@ -1,56 +1,53 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart' hide Category;
 
-import 'package:dbad/data/daos/categories_dao.dart';
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/category.dart';
+import 'package:dbad/data/services/categories_service.dart';
 
 class CategoriesProvider extends ChangeNotifier {
-  final CategoriesDao _dao;
+  final CategoriesService _service;
 
   List<Category> _categories = [];
   String _searchQuery = '';
-  StreamSubscription<List<Category>>? _subscription;
+  bool _isLoading = false;
 
-  CategoriesProvider(this._dao) {
-    _subscribe();
+  CategoriesProvider(this._service) {
+    _loadData();
   }
 
   List<Category> get categories => _categories;
   String get searchQuery => _searchQuery;
+  bool get isLoading => _isLoading;
 
   void setSearchQuery(String query) {
     _searchQuery = query;
-    _subscribe();
+    _loadData();
+  }
+
+  Future<int> createCategory(String name) async {
+    final id = await _service.insertCategory(name);
+    await _loadData();
+    return id;
+  }
+
+  Future<void> deleteCategory(int id) async {
+    await _service.deleteCategory(id);
+    await _loadData();
+  }
+
+  Future<void> updateCategory(int id, String name) async {
+    await _service.updateCategory(id, name);
+    await _loadData();
+  }
+
+  Future<void> _loadData() async {
+    _isLoading = true;
     notifyListeners();
-  }
 
-  Future<int> createCategory(String name) {
-    return _dao.insertCategory(name);
-  }
+    _categories = _searchQuery.isEmpty
+        ? await _service.getAllCategories()
+        : await _service.getCategoriesFiltered(_searchQuery);
 
-  Future<void> deleteCategory(int id) {
-    return _dao.deleteCategory(id);
-  }
-
-  Future<void> updateCategory(int id, String name) {
-    return _dao.updateCategory(id, name);
-  }
-
-  void _subscribe() {
-    _subscription?.cancel();
-    final stream = _searchQuery.isEmpty
-        ? _dao.watchAllCategories()
-        : _dao.watchCategoriesFiltered(_searchQuery);
-    _subscription = stream.listen((data) {
-      _categories = data;
-      notifyListeners();
-    });
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
+    _isLoading = false;
+    notifyListeners();
   }
 }

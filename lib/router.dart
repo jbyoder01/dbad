@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/daos/flashcards_dao.dart';
+import 'package:dbad/data/services/flashcards_service.dart';
 import 'package:dbad/providers/flashcards_provider.dart';
 import 'package:dbad/providers/game_provider.dart';
 import 'package:dbad/screens/home/home_screen.dart';
@@ -21,7 +21,7 @@ final goRouter = GoRouter(
             final categoryId = int.parse(state.pathParameters['id']!);
             return ChangeNotifierProvider(
               create: (context) => FlashcardsProvider(
-                context.read<FlashcardsDao>(),
+                context.read<FlashcardsService>(),
                 categoryId,
               ),
               child: CategoryScreen(categoryId: categoryId),
@@ -51,9 +51,9 @@ final goRouter = GoRouter(
               path: 'play',
               builder: (context, state) {
                 final categoryId = int.parse(state.pathParameters['id']!);
-                final dao = context.read<FlashcardsDao>();
+                final service = context.read<FlashcardsService>();
                 return ChangeNotifierProvider(
-                  create: (_) => GameProvider(dao)..loadCards(categoryId),
+                  create: (_) => GameProvider(service)..loadCards(categoryId),
                   child: const GameScreen(),
                 );
               },

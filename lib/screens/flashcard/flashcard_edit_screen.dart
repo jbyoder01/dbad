@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/daos/flashcards_dao.dart';
+import 'package:dbad/data/services/flashcards_service.dart';
 
 class FlashcardEditScreen extends StatefulWidget {
   final int categoryId;
@@ -44,7 +44,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
     setState(() {
       _isLoading = true;
     });
-    final flashcard = await context.read<FlashcardsDao>().getFlashcardById(
+    final flashcard = await context.read<FlashcardsService>().getFlashcardById(
       widget.flashcardId!,
     );
     if (mounted) {
@@ -125,7 +125,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
       return;
     }
 
-    final dao = context.read<FlashcardsDao>();
+    final dao = context.read<FlashcardsService>();
     if (widget.isEditing) {
       await dao.updateFlashcard(widget.flashcardId!, question, answer);
     } else {
@@ -150,7 +150,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
           ),
           TextButton(
             onPressed: () async {
-              await context.read<FlashcardsDao>().deleteFlashcard(
+              await context.read<FlashcardsService>().deleteFlashcard(
                 widget.flashcardId!,
               );
               if (ctx.mounted) {

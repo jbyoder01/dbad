@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:dbad/data/daos/flashcards_dao.dart';
-import 'package:dbad/data/database.dart';
+import 'package:dbad/data/models/flashcard.dart';
+import 'package:dbad/data/services/flashcards_service.dart';
 
 class GameProvider extends ChangeNotifier {
-  final FlashcardsDao _dao;
+  final FlashcardsService _service;
 
   List<Flashcard> _cards = [];
   int _currentIndex = 0;
   bool _isComplete = false;
   bool _isLoading = true;
 
-  GameProvider(this._dao);
+  GameProvider(this._service);
 
   List<Flashcard> get cards => List.unmodifiable(_cards);
   int get currentIndex => _currentIndex;
@@ -23,7 +23,7 @@ class GameProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _cards = await _dao.getFlashcardsForCategory(categoryId);
+    _cards = await _service.getFlashcardsForCategory(categoryId);
     _cards.shuffle();
     _currentIndex = 0;
     _isComplete = _cards.isEmpty;
