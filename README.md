@@ -49,21 +49,30 @@ lib/
 
 1. Create a Supabase project and run the migration in `supabase/migrations/` via `supabase db push`
 2. Create a user in the Supabase dashboard (Authentication > Users)
-3. Copy `.env.example` to `.env` and fill in your Supabase URL and publishable key:
-   ```
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_PUBLISHABLE_KEY=your-publishable-key
-   ```
-4. Run the app:
-   ```bash
-   flutter pub get
-   ./run.sh run
-   ```
+3. Copy `dart_defines.example.json` to `dart_defines.json` and fill in your Supabase URL and publishable key
+4. Run `flutter pub get`
 
-To build a release APK:
+### Running in VS Code
+
+Use the **Run and Debug** sidebar (or press `F5`) and select the "DBAD" configuration. Do not use the inline "Run" / "Debug" buttons above `main()` — those don't load the Supabase credentials. Select the device to run on from the **Flutter** sidebar.
+
+### Building a release version
+
+**Android** (connect phone via USB):
 ```bash
-./run.sh build apk --release
+flutter build apk --release --dart-define-from-file=dart_defines.json
+flutter install --release
 ```
+
+**macOS**:
+```bash
+flutter build macos --release --dart-define-from-file=dart_defines.json
+```
+Then install to Applications:
+```bash
+cp -r build/macos/Build/Products/Release/dbad.app /Applications/
+```
+Re-running this will overwrite the previous install.
 
 ## TODO
 
