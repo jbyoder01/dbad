@@ -67,8 +67,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          spacing: 8,
           children: [
-            const SizedBox(height: 16),
             Consumer<FlashcardsProvider>(
               builder: (context, provider, _) {
                 return TextField(
@@ -77,7 +77,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 );
               },
             ),
-            const SizedBox(height: 8),
             Expanded(
               child: Consumer<FlashcardsProvider>(
                 builder: (context, provider, _) {
@@ -133,7 +132,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
               ],
             ),
-            SafeArea(top: false, child: const SizedBox(height: 16)),
+            SafeArea(top: false, child: const SizedBox(height: 8)),
           ],
         ),
       ),
