@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import 'package:dbad/providers/game_provider.dart';
-import 'package:dbad/screens/flashcard/widgets/flashcard.dart';
+import 'package:dbad/data/models/flashcard.dart';
+import 'package:dbad/screens/flashcard/widgets/flashcard.dart' as widgets;
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  final List<Flashcard> flashcards;
+
+  const GameScreen({super.key, required this.flashcards});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -14,6 +15,16 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final PageController _pageController = PageController();
+  late final List<Flashcard> _cards;
+  int _currentIndex = 0;
+  bool _isComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cards = List.of(widget.flashcards)..shuffle();
+    _isComplete = _cards.isEmpty;
+  }
 
   @override
   void dispose() {
@@ -21,65 +32,67 @@ class _GameScreenState extends State<GameScreen> {
     super.dispose();
   }
 
+  void _onPageChanged(int index) {
+    if (index >= _cards.length) {
+      setState(() {
+        _isComplete = true;
+      });
+      return;
+    }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<GameProvider>(
-      builder: (context, game, _) {
-        if (game.isLoading) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator.adaptive()),
-          );
-        }
-
-        if (game.isComplete) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Done!')),
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'You reviewed all ${game.totalCards} cards!',
-                    style: _completionStyle,
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: () => context.pop(),
-                    child: const Text('Done'),
-                  ),
-                ],
+    if (_isComplete) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Done!')),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'You reviewed all ${_cards.length} cards!',
+                style: _completionStyle,
               ),
-            ),
-          );
-        }
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: () => context.pop(),
+                child: const Text('Done'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Card ${game.currentIndex + 1} of ${game.totalCards}'),
-          ),
-          body: SafeArea(
-            top: false,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: game.totalCards + 1,
-              onPageChanged: (index) => game.onPageChanged(index),
-              itemBuilder: (context, index) {
-                if (index >= game.totalCards) {
-                  return const SizedBox.shrink();
-                }
-                final card = game.cards[index];
-                return Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Flashcard(
-                    question: card.question,
-                    answer: card.answer,
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Card ${_currentIndex + 1} of ${_cards.length}'),
+      ),
+      body: SafeArea(
+        top: false,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: _cards.length + 1,
+          onPageChanged: _onPageChanged,
+          itemBuilder: (context, index) {
+            if (index >= _cards.length) {
+              return const SizedBox.shrink();
+            }
+            final card = _cards[index];
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: widgets.Flashcard(
+                question: card.question,
+                answer: card.answer,
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

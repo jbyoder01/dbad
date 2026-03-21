@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/services/categories_service.dart';
+import 'package:dbad/providers/categories_provider.dart';
 
 class RenameCategoryDialog extends StatefulWidget {
   final int categoryId;
@@ -61,7 +61,7 @@ class _RenameCategoryDialogState extends State<RenameCategoryDialog> {
     final name = _controller.text.trim();
     if (name.isNotEmpty) {
       await context
-          .read<CategoriesService>()
+          .read<CategoriesProvider>()
           .updateCategory(widget.categoryId, name);
       widget.onRenamed(name);
     }

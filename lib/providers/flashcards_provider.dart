@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:dbad/data/models/flashcard.dart';
 import 'package:dbad/data/services/flashcards_service.dart';
@@ -11,7 +12,8 @@ class FlashcardsProvider extends ChangeNotifier {
   String _searchQuery = '';
   bool _isLoading = false;
 
-  FlashcardsProvider(this._service, this.categoryId) {
+  FlashcardsProvider(SupabaseClient client, this.categoryId)
+      : _service = FlashcardsService(client) {
     _loadData();
   }
 
@@ -22,6 +24,10 @@ class FlashcardsProvider extends ChangeNotifier {
   void setSearchQuery(String query) {
     _searchQuery = query;
     _loadData();
+  }
+
+  Future<Flashcard> getFlashcardById(int id) async {
+    return _service.getFlashcardById(id);
   }
 
   Future<int> createFlashcard(String question, String answer) async {

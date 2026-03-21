@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dbad/data/services/flashcards_service.dart';
+import 'package:dbad/providers/flashcards_provider.dart';
 
 class FlashcardEditScreen extends StatefulWidget {
-  final int categoryId;
   final int? flashcardId;
 
-  const FlashcardEditScreen({
-    super.key,
-    required this.categoryId,
-    this.flashcardId,
-  });
+  const FlashcardEditScreen({super.key, this.flashcardId});
 
   bool get isEditing => flashcardId != null;
 
@@ -44,7 +39,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
     setState(() {
       _isLoading = true;
     });
-    final flashcard = await context.read<FlashcardsService>().getFlashcardById(
+    final flashcard = await context.read<FlashcardsProvider>().getFlashcardById(
       widget.flashcardId!,
     );
     if (mounted) {
@@ -73,7 +68,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator.adaptive())
           : SafeArea(
-            child: Padding(
+              child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
@@ -111,7 +106,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
                   ],
                 ),
               ),
-          ),
+            ),
     );
   }
 
@@ -125,11 +120,11 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
       return;
     }
 
-    final dao = context.read<FlashcardsService>();
+    final provider = context.read<FlashcardsProvider>();
     if (widget.isEditing) {
-      await dao.updateFlashcard(widget.flashcardId!, question, answer);
+      await provider.updateFlashcard(widget.flashcardId!, question, answer);
     } else {
-      await dao.insertFlashcard(widget.categoryId, question, answer);
+      await provider.createFlashcard(question, answer);
     }
 
     if (mounted) {
@@ -150,7 +145,7 @@ class _FlashcardEditScreenState extends State<FlashcardEditScreen> {
           ),
           TextButton(
             onPressed: () async {
-              await context.read<FlashcardsService>().deleteFlashcard(
+              await context.read<FlashcardsProvider>().deleteFlashcard(
                 widget.flashcardId!,
               );
               if (ctx.mounted) {

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:dbad/data/models/category.dart';
 import 'package:dbad/data/services/categories_service.dart';
@@ -10,7 +11,8 @@ class CategoriesProvider extends ChangeNotifier {
   String _searchQuery = '';
   bool _isLoading = false;
 
-  CategoriesProvider(this._service) {
+  CategoriesProvider(SupabaseClient client)
+      : _service = CategoriesService(client) {
     _loadData();
   }
 
@@ -21,6 +23,10 @@ class CategoriesProvider extends ChangeNotifier {
   void setSearchQuery(String query) {
     _searchQuery = query;
     _loadData();
+  }
+
+  Future<Category> getCategoryById(int id) async {
+    return _service.getCategoryById(id);
   }
 
   Future<int> createCategory(String name) async {

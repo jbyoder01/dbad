@@ -78,15 +78,9 @@ Re-running this will overwrite the previous install.
 
 ### Error handling for Supabase operations
 
-Currently, failed network requests (no internet, server errors, RLS violations) bubble up as unhandled `PostgrestException`s. The app silently fails or crashes.
+No async methods across any service or provider class have error handling. Failed network requests (no internet, server errors, RLS violations) bubble up as unhandled `PostgrestException`s. The app silently fails or crashes. Additionally, `_loadData()` in both `CategoriesProvider` and `FlashcardsProvider` sets `_isLoading = true` at the start but never resets it to `false` if an exception is thrown, leaving the UI stuck in a loading state on failure.
 
-**Plan:**
-1. Add an `error` field to `CategoriesProvider` and `FlashcardsProvider` (e.g., `String? _error`)
-2. Wrap each mutation and `_loadData()` call in try/catch within the providers
-3. On catch, set `_error` with a user-friendly message and call `notifyListeners()`
-4. In the UI, listen for `provider.error` and display a `SnackBar` when non-null
-5. Clear the error after it's been shown
-6. For `GameProvider.loadCards()`, catch errors and expose an error state so the game screen can show a retry option instead of an infinite loading spinner
+Can be addressed using a `Result` object pattern with success/error states, as described in the [Flutter docs](https://docs.flutter.dev/app-architecture/design-patterns/result).
 
 **Files:** All 3 providers, `home_screen.dart`, `category_screen.dart`, `game_screen.dart`
 
