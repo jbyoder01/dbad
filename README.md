@@ -70,11 +70,15 @@ flutter build macos --release --dart-define-from-file=dart_defines.json
 ```
 Then install to Applications:
 ```bash
-cp -r build/macos/Build/Products/Release/dbad.app /Applications/
+cp -r build/macos/Build/Products/Release/DBAD.app /Applications/
 ```
 Re-running this will overwrite the previous install.
 
 ## TODO
+
+### Loading indicators on async operations
+
+Loading indicators need to be added whenever the user initiates an async operation.
 
 ### Error handling for Supabase operations
 
